@@ -13,6 +13,7 @@ import {
   ScanFace,
   UserRound,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -98,11 +99,13 @@ async function readJson(response: Response): Promise<unknown> {
  * while the request is in progress and closes the camera after capture.
  */
 export function ScanPanel({ className, onMatch }: ScanPanelProps) {
+  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const previewUrlRef = useRef<string | null>(null);
   const cameraRequestIdRef = useRef(0);
+  const autoScanTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
   const descriptionId = useId();
 
@@ -113,6 +116,10 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const stopCamera = useCallback(() => {
+    if (autoScanTimerRef.current) {
+      clearTimeout(autoScanTimerRef.current);
+      autoScanTimerRef.current = null;
+    }
     const stream = streamRef.current;
 
     if (stream) {
@@ -284,6 +291,8 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
         setMatchedUser(user);
         setPhase("matched");
         onMatch?.(user);
+        sessionStorage.setItem("facecheck:last-match", JSON.stringify(user));
+        router.push("/result");
         return;
       }
 
@@ -307,7 +316,21 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
         abortRef.current = null;
       }
     }
-  }, [clearPreview, onMatch, stopCamera]);
+  }, [clearPreview, onMatch, router, stopCamera]);
+
+  useEffect(() => {
+    if (phase !== "camera") return;
+    autoScanTimerRef.current = setTimeout(() => {
+      autoScanTimerRef.current = null;
+      void captureAndScan();
+    }, 1_500);
+    return () => {
+      if (autoScanTimerRef.current) {
+        clearTimeout(autoScanTimerRef.current);
+        autoScanTimerRef.current = null;
+      }
+    };
+  }, [captureAndScan, phase]);
 
   const closeCamera = useCallback(() => {
     cameraRequestIdRef.current += 1;
@@ -363,7 +386,7 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
                 <div className="h-[70%] w-[46%] rounded-[46%] border-2 border-white/90 shadow-[0_0_0_999px_rgba(15,23,42,0.22)]" />
               </div>
               <p className="absolute inset-x-0 bottom-4 mx-auto w-fit rounded-full bg-slate-950/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur">
-                Keep your face inside the guide
+                Hold still — scanning automatically
               </p>
               {phase === "capturing" && !capturedPreview && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/45 text-center text-white backdrop-blur-[1px]">
@@ -480,15 +503,10 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
         <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
           {hasCamera ? (
             <>
-              <button
-                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={isLoading}
-                onClick={() => void captureAndScan()}
-                type="button"
-              >
-                <ScanFace className="size-4" aria-hidden="true" />
-                Capture and check
-              </button>
+              <div className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-50 px-4 text-sm font-semibold text-indigo-700">
+                <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+                Scanning automatically…
+              </div>
               <button
                 className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={closeCamera}
