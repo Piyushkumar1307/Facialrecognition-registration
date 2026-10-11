@@ -21,7 +21,21 @@ export function hasSameOrigin(request: NextRequest): boolean {
   if (!origin) return false;
 
   try {
-    return new URL(origin).origin === new URL(request.url).origin;
+    const requestOrigin = new URL(request.url).origin;
+    const allowedOrigins = new Set([requestOrigin]);
+    const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+    const host = forwardedHost || request.headers.get("host")?.trim();
+    const forwardedProtocol = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+    const protocol = forwardedProtocol === "http" || forwardedProtocol === "https"
+      ? forwardedProtocol
+      : new URL(request.url).protocol.replace(":", "");
+
+    // Reverse proxies such as Render terminate public HTTPS before forwarding
+    // to the local Worker, so request.url may contain an internal origin.
+    if (host && !/[\s/@\\]/.test(host)) {
+      allowedOrigins.add(new URL(`${protocol}://${host}`).origin);
+    }
+    return allowedOrigins.has(new URL(origin).origin);
   } catch {
     return false;
   }
