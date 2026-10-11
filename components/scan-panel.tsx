@@ -2,6 +2,8 @@
 
 /* The preview is a transient browser Blob URL, which Next/Image cannot optimize. */
 /* eslint-disable @next/next/no-img-element */
+/* Full reloads avoid Vinext soft-navigation failures behind Render's Worker proxy. */
+/* eslint-disable @next/next/no-location-assign-relative-destination */
 
 import {
   Camera,
