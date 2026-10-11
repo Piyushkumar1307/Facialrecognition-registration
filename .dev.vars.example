@@ -1,5 +1,6 @@
-# Copy this file to .env.local for local development. Do not commit .env.local.
-# In production, add these through the hosting platform's runtime secret settings.
+# Copy this file to .dev.vars for local Cloudflare/Vinext development.
+# Do not commit .dev.vars. In production, add these through the hosting
+# platform's runtime secret settings instead.
 
 # Neon Postgres pooled connection string
 DATABASE_URL=

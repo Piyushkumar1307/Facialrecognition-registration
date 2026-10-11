@@ -17,7 +17,7 @@ The app uses a Rekognition collection because the scan flow is a 1:N lookup (the
 
 ## Set up locally
 
-1. Copy `.env.example` to `.env.local` and fill in every required value. Do not commit that file.
+1. Copy `.dev.vars.example` to `.dev.vars` and fill in every required value. Do not commit that file.
 2. Create a Rekognition collection once:
 
    ```sh

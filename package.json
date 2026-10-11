@@ -12,7 +12,7 @@
     "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "rekognition:create-collection": "node --env-file=.env.local scripts/create-rekognition-collection.mjs"
+    "rekognition:create-collection": "node --env-file=.dev.vars scripts/create-rekognition-collection.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-rekognition": "^3.1149.0",
