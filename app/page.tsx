@@ -1,6 +1,3 @@
-/* Full document navigation is intentional for compatibility with Render's Worker proxy. */
-/* eslint-disable @next/next/no-html-link-for-pages */
-
 import { ArrowRight, LockKeyhole, ScanFace } from "lucide-react";
 import { requireChatGPTUser } from "@/app/chatgpt-auth";
 import { ScanPanel } from "@/components/scan-panel";
