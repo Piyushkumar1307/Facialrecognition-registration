@@ -24,7 +24,7 @@ ADDUSER_PASSCODE=
 # Main-site login for hosting platforms such as Render. Keep this different
 # from ADDUSER_PASSCODE so ordinary scanners cannot unlock enrollment tools.
 # Set SITE_AUTH_MODE=passcode on Render. Leave it empty on ChatGPT Sites.
-SITE_AUTH_MODE=
+SITE_AUTH_MODE=passcode
 SITE_PASSCODE=
 
 # Optional calibration values. Start at 95 and validate with consented data.
