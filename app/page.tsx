@@ -1,5 +1,7 @@
+/* Full document navigation is intentional for compatibility with Render's Worker proxy. */
+/* eslint-disable @next/next/no-html-link-for-pages */
+
 import { ArrowRight, LockKeyhole, ScanFace } from "lucide-react";
-import Link from "next/link";
 import { requireChatGPTUser } from "@/app/chatgpt-auth";
 import { ScanPanel } from "@/components/scan-panel";
 import { SiteHeader } from "@/components/site-header";
@@ -32,9 +34,9 @@ export default async function Home() {
               Live scan photos are processed for this check and are not saved by FaceCheck. Use only with consent.
             </p>
           </div>
-          <Link href="/adduser" className="inline-flex shrink-0 items-center gap-1.5 font-semibold text-[#075c52] hover:text-[#063f39]">
+          <a href="/adduser" className="inline-flex shrink-0 items-center gap-1.5 font-semibold text-[#075c52] hover:text-[#063f39]">
             Enroll users <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
+          </a>
         </aside>
       </div>
     </main>

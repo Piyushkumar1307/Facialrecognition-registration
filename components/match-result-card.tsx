@@ -1,5 +1,8 @@
 "use client";
 
+/* Full document navigation is intentional for compatibility with Render's Worker proxy. */
+/* eslint-disable @next/next/no-html-link-for-pages */
+
 import {
   ArrowLeft,
   BadgeCheck,
@@ -12,7 +15,6 @@ import {
   ShieldCheck,
   UserRound,
 } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type MatchResult = {
@@ -77,9 +79,9 @@ export function MatchResultCard() {
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
           Results are kept only for the current browser session and opened immediately after a confirmed match.
         </p>
-        <Link href="/" className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800">
+        <a href="/" className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800">
           <ScanFace className="size-4" /> Start a face scan
-        </Link>
+        </a>
       </section>
     );
   }
@@ -130,9 +132,9 @@ export function MatchResultCard() {
             </div>
           ))}
         </dl>
-        <Link href="/" className="mt-7 inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+        <a href="/" className="mt-7 inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 hover:bg-slate-50">
           <ArrowLeft className="size-4" /> Scan another person
-        </Link>
+        </a>
       </div>
     </section>
   );

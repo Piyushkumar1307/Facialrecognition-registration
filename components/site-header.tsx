@@ -1,5 +1,7 @@
+/* Full document navigation is intentional for compatibility with Render's Worker proxy. */
+/* eslint-disable @next/next/no-html-link-for-pages */
+
 import { Camera, ShieldCheck, Upload, UserRoundPlus } from "lucide-react";
-import Link from "next/link";
 
 type SiteHeaderProps = {
   current: "scan" | "import" | "register";
@@ -9,7 +11,7 @@ export function SiteHeader({ current }: SiteHeaderProps) {
   return (
     <header className="border-b border-[#dce6e1] bg-[#fbfdfb]/95 backdrop-blur">
       <div className="mx-auto flex min-h-18 max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <Link href="/" className="flex items-center gap-3 text-[#12211d]" aria-label="FaceCheck scan home">
+        <a href="/" className="flex items-center gap-3 text-[#12211d]" aria-label="FaceCheck scan home">
           <span className="grid size-10 place-items-center rounded-xl bg-[#0c6b62] text-white shadow-sm">
             <ShieldCheck className="size-5" aria-hidden="true" />
           </span>
@@ -19,10 +21,10 @@ export function SiteHeader({ current }: SiteHeaderProps) {
               Private lookup
             </span>
           </span>
-        </Link>
+        </a>
 
         <nav aria-label="Primary navigation" className="flex items-center gap-1 rounded-xl border border-[#dce6e1] bg-white p-1 text-sm font-medium">
-          <Link
+          <a
             href="/"
             aria-current={current === "scan" ? "page" : undefined}
             className={`inline-flex min-h-9 items-center gap-2 rounded-lg px-3 transition-colors ${
@@ -33,8 +35,8 @@ export function SiteHeader({ current }: SiteHeaderProps) {
           >
             <Camera className="size-4" aria-hidden="true" />
             <span className="hidden sm:inline">Scan</span>
-          </Link>
-          <Link
+          </a>
+          <a
             href="/selfregister"
             aria-current={current === "register" ? "page" : undefined}
             className={`inline-flex min-h-9 items-center gap-2 rounded-lg px-3 transition-colors ${
@@ -45,8 +47,8 @@ export function SiteHeader({ current }: SiteHeaderProps) {
           >
             <UserRoundPlus className="size-4" aria-hidden="true" />
             <span className="hidden sm:inline">Self-register</span>
-          </Link>
-          <Link
+          </a>
+          <a
             href="/adduser"
             aria-current={current === "import" ? "page" : undefined}
             className={`inline-flex min-h-9 items-center gap-2 rounded-lg px-3 transition-colors ${
@@ -57,7 +59,7 @@ export function SiteHeader({ current }: SiteHeaderProps) {
           >
             <Upload className="size-4" aria-hidden="true" />
             <span className="hidden sm:inline">Add users</span>
-          </Link>
+          </a>
         </nav>
       </div>
     </header>
