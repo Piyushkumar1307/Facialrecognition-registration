@@ -13,14 +13,14 @@ const rows = [
     "MS Dhoni",
     45,
     "Cricketer",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5e/MS_Dhoni_2016.jpg",
+    "https://res.cloudinary.com/ddph6chua/image/upload/f_jpg/v1791716042/Indian-cricketer-Mahendra-Singh-Dhoni-2011.jpg_sp3i9q.webp",
   ],
   [
     "VK-001",
     "Virat Kohli",
     37,
     "Cricketer",
-    "https://upload.wikimedia.org/wikipedia/commons/1/15/Virat_Kohli_portrait.jpg",
+    "https://res.cloudinary.com/ddph6chua/image/upload/v1791716041/images-2_ucp4q0.jpg",
   ],
 ];
 
