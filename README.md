@@ -46,6 +46,8 @@ All secrets must be server-side deployment secrets—never `NEXT_PUBLIC_*` value
 | `AWS_REKOGNITION_COLLECTION_ID` | Existing collection ID |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Server-only Cloudinary upload credentials |
 | `CLOUDINARY_FOLDER` | Folder for authenticated reference assets |
+| `SITE_AUTH_MODE` | Set to `passcode` on Render; omit on ChatGPT Sites |
+| `SITE_PASSCODE` | Main-site login passcode for Render and other non-Sites hosts |
 | `ADDUSER_PASSCODE` | Server-side passcode required before using `/adduser` |
 
 Optional safety tuning: `FACE_MATCH_THRESHOLD` (default `95`), `FACE_MATCH_MARGIN` (default `3`), and `MAX_IMAGE_BYTES` (capped at `5,000,000`).
@@ -70,6 +72,14 @@ Reference image URLs must be reachable over HTTP(S), must not point to private/l
 ## Deployment and access
 
 The hosted Site starts private. Add the secrets through its runtime environment-variable controls, then deploy a new version. A signed-in visitor must also enter `ADDUSER_PASSCODE` before `/adduser` and its import API unlock for that browser. Changing the passcode immediately invalidates existing unlock cookies.
+
+### Render
+
+Set every required secret above in the Render service environment. Set
+`SITE_AUTH_MODE=passcode` and choose a long `SITE_PASSCODE`. FaceCheck then uses
+`/login` and an HTTP-only signed cookie on Render; ChatGPT Sites authenticated-user
+headers continue to work when hosted on Sites. Keep `SITE_PASSCODE` different
+from `ADDUSER_PASSCODE`.
 
 Use a different least-privilege AWS credential for production. If an access key was ever put in client code, Git history, or chat, rotate it before using this app.
 
