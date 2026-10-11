@@ -46,7 +46,7 @@ All secrets must be server-side deployment secrets—never `NEXT_PUBLIC_*` value
 | `AWS_REKOGNITION_COLLECTION_ID` | Existing collection ID |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Server-only Cloudinary upload credentials |
 | `CLOUDINARY_FOLDER` | Folder for authenticated reference assets |
-| `ADMIN_EMAILS` | Comma-separated emails allowed to use `/adduser` |
+| `ADDUSER_PASSCODE` | Server-side passcode required before using `/adduser` |
 
 Optional safety tuning: `FACE_MATCH_THRESHOLD` (default `95`), `FACE_MATCH_MARGIN` (default `3`), and `MAX_IMAGE_BYTES` (capped at `5,000,000`).
 
@@ -57,17 +57,19 @@ The runtime IAM identity needs `rekognition:DetectFaces`, `rekognition:SearchFac
 Download the template from `/adduser`, or use these headers:
 
 ```csv
-external_id,full_name,email,department,role,face_image_url
-E-1001,Ada Lovelace,ada@example.com,Engineering,Platform Lead,https://example.com/ada.jpg
+external_id,full_name,age,profession,face_image_url
+E-1001,Ada Lovelace,31,Software engineer,https://example.com/ada.jpg
 ```
 
-`external_id` and `full_name` are required. `face_image_url` is optional for a plain profile import, but a user cannot match until a JPEG or PNG reference image is enrolled. The importer accepts common aliases such as `id`, `employee_id`, `name`, and `image_url`; it sends five rows at a time to keep external work bounded. Re-importing an external ID updates the profile and safely replaces its indexed face when a new reference image is supplied.
+`external_id` and `full_name` are required. `age` (a whole number from 1–130) and `profession` are optional profile fields that are shown after a confirmed match. `face_image_url` is optional for a plain profile import, but a user cannot match until a JPEG or PNG reference image is enrolled. The importer accepts common aliases such as `id`, `employee_id`, `name`, and `image_url`; it sends five rows at a time to keep external work bounded. Re-importing an external ID updates the profile and safely replaces its indexed face when a new reference image is supplied.
+
+The importer accepts **CSV** files. Excel can open and edit the CSV directly; if you save an `.xlsx` workbook, use **Save As → CSV UTF-8** before dropping it into `/adduser`.
 
 Reference image URLs must be reachable over HTTP(S), must not point to private/localhost networks, must be JPEG/PNG, and must be at most 5 MB. Cloudinary receives the accepted reference as an `authenticated` asset; the original source URL is not retained in Neon.
 
 ## Deployment and access
 
-The hosted Site starts private. Add the secrets through its runtime environment-variable controls, then deploy a new version. The `/adduser` API additionally checks the signed-in user against `ADMIN_EMAILS`; this is deliberate even when the Site itself is private.
+The hosted Site starts private. Add the secrets through its runtime environment-variable controls, then deploy a new version. A signed-in visitor must also enter `ADDUSER_PASSCODE` before `/adduser` and its import API unlock for that browser. Changing the passcode immediately invalidates existing unlock cookies.
 
 Use a different least-privilege AWS credential for production. If an access key was ever put in client code, Git history, or chat, rotate it before using this app.
 

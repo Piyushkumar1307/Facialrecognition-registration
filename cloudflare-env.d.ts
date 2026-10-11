@@ -11,7 +11,7 @@ declare namespace Cloudflare {
     CLOUDINARY_API_KEY?: string;
     CLOUDINARY_API_SECRET?: string;
     CLOUDINARY_FOLDER?: string;
-    ADMIN_EMAILS?: string;
+    ADDUSER_PASSCODE?: string;
     FACE_MATCH_THRESHOLD?: string;
     FACE_MATCH_MARGIN?: string;
     MAX_IMAGE_BYTES?: string;

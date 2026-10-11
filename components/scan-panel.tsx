@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
 export type FaceMatchUser = {
   externalId: string;
   fullName: string;
+  age?: string | null;
+  profession?: string | null;
   email?: string | null;
   department?: string | null;
   role?: string | null;
@@ -75,6 +77,8 @@ function asMatchedUser(value: unknown): FaceMatchUser | null {
   return {
     externalId,
     fullName,
+    age: getString(value.age) ?? null,
+    profession: getString(value.profession) ?? null,
     email: getString(value.email) ?? null,
     department: getString(value.department) ?? null,
     role: getString(value.role) ?? null,
@@ -406,6 +410,18 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
                       <dt className="sr-only">Directory ID</dt>
                       <dd>ID: {matchedUser.externalId}</dd>
                     </div>
+                    {matchedUser.age && (
+                      <div>
+                        <dt className="sr-only">Age</dt>
+                        <dd>Age: {matchedUser.age}</dd>
+                      </div>
+                    )}
+                    {matchedUser.profession && (
+                      <div>
+                        <dt className="sr-only">Profession</dt>
+                        <dd>{matchedUser.profession}</dd>
+                      </div>
+                    )}
                     {matchedUser.department && (
                       <div>
                         <dt className="sr-only">Department</dt>

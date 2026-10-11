@@ -10,6 +10,8 @@ import { deleteIndexedFace, indexFace } from "@/lib/server/rekognition";
 export type ImportUserInput = {
   externalId?: unknown;
   fullName?: unknown;
+  age?: unknown;
+  profession?: unknown;
   email?: unknown;
   department?: unknown;
   role?: unknown;
@@ -26,6 +28,8 @@ export type ImportRowResult = {
 type NormalizedImportUser = {
   externalId: string;
   fullName: string;
+  age: string | null;
+  profession: string | null;
   email: string | null;
   department: string | null;
   role: string | null;
@@ -66,6 +70,10 @@ function metadata(value: unknown): Record<string, string> {
 function normalize(input: ImportUserInput): NormalizedImportUser {
   const externalId = text(input.externalId, "externalId", 128, true)!;
   const fullName = text(input.fullName, "fullName", 160, true)!;
+  const age = text(input.age, "age", 3);
+  if (age && (!/^[1-9]\d{0,2}$/.test(age) || Number(age) > 130)) {
+    throw new Error("age must be a whole number from 1 to 130.");
+  }
   const email = text(input.email, "email", 320);
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw new Error("email is not valid.");
@@ -74,6 +82,8 @@ function normalize(input: ImportUserInput): NormalizedImportUser {
   return {
     externalId,
     fullName,
+    age,
+    profession: text(input.profession, "profession", 160),
     email,
     department: text(input.department, "department", 120),
     role: text(input.role, "role", 120),
@@ -86,6 +96,13 @@ function withProfile(
   input: NormalizedImportUser,
   existing: EnrolledUser | null,
 ): EnrolledUser {
+  const profileMetadata = { ...(existing?.metadata ?? {}), ...input.metadata };
+  // These fields live in the flexible JSON profile column, so the database
+  // schema stays backwards-compatible while the public scan response remains
+  // deliberately allow-listed.
+  if (input.age) profileMetadata.age = input.age;
+  if (input.profession) profileMetadata.profession = input.profession;
+
   return {
     externalId: input.externalId,
     fullName: input.fullName,
@@ -96,7 +113,7 @@ function withProfile(
     cloudinaryVersion: existing?.cloudinaryVersion ?? null,
     rekognitionFaceId: existing?.rekognitionFaceId ?? null,
     rekognitionExternalImageId: existing?.rekognitionExternalImageId ?? null,
-    metadata: { ...(existing?.metadata ?? {}), ...input.metadata },
+    metadata: profileMetadata,
     active: true,
   };
 }

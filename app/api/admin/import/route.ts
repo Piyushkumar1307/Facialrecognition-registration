@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { isAdministrator, requestUser } from "@/lib/server/auth";
+import { hasAddUserAccessForRequest } from "@/lib/server/add-user-access";
+import { requestUser } from "@/lib/server/auth";
 import { ensureDatabaseSchema } from "@/lib/server/database";
 import { AppConfigurationError } from "@/lib/server/env";
 import { hasSameOrigin, noStoreJson } from "@/lib/server/http";
@@ -24,8 +25,8 @@ export async function POST(request: NextRequest) {
 
   const user = await requestUser();
   if (!user) return noStoreJson({ error: "Sign in before importing users." }, { status: 401 });
-  if (!isAdministrator(user)) {
-    return noStoreJson({ error: "This account is not allowed to import users." }, { status: 403 });
+  if (!(await hasAddUserAccessForRequest(request))) {
+    return noStoreJson({ error: "Enter the add-user passcode before importing users." }, { status: 403 });
   }
 
   let body: unknown;

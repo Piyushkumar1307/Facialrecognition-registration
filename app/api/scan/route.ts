@@ -31,6 +31,8 @@ export async function POST(request: NextRequest) {
       user: {
         externalId: user.externalId,
         fullName: user.fullName,
+        age: user.metadata.age ?? null,
+        profession: user.metadata.profession ?? null,
         email: user.email,
         department: user.department,
         role: user.role,

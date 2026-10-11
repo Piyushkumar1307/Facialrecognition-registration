@@ -1,12 +1,15 @@
-import { FileSpreadsheet, ShieldAlert } from "lucide-react";
+import { FileSpreadsheet, ShieldCheck } from "lucide-react";
 import { requireChatGPTUser } from "@/app/chatgpt-auth";
+import { hasAddUserAccess } from "@/lib/server/add-user-access";
 import { AddUserImporter } from "@/components/add-user-importer";
+import { AddUserPasscodeGate } from "@/components/add-user-passcode-gate";
 import { SiteHeader } from "@/components/site-header";
 
 export const dynamic = "force-dynamic";
 
 export default async function AddUserPage() {
   await requireChatGPTUser("/adduser");
+  const hasAccess = await hasAddUserAccess();
   return (
     <main className="min-h-screen bg-[#f7f8f6] text-[#12211d]">
       <SiteHeader current="import" />
@@ -22,12 +25,12 @@ export default async function AddUserPage() {
               Review rows before importing. A reference image URL enrolls that person for face matching; rows without one are saved as profiles only.
             </p>
           </div>
-          <div className="flex max-w-sm gap-2 rounded-xl border border-[#f0d8aa] bg-[#fff9eb] px-3 py-2.5 text-xs leading-5 text-[#765a22]">
-            <ShieldAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-            Only addresses listed in <code className="font-semibold">ADMIN_EMAILS</code> can complete an import.
+          <div className="flex max-w-sm gap-2 rounded-xl border border-[#c9dfd7] bg-[#ecf8f4] px-3 py-2.5 text-xs leading-5 text-[#075c52]">
+            <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            {hasAccess ? "Importer unlocked for this browser." : "Enter the add-user passcode to unlock the importer."}
           </div>
         </div>
-        <AddUserImporter />
+        {hasAccess ? <AddUserImporter /> : <AddUserPasscodeGate />}
       </div>
     </main>
   );

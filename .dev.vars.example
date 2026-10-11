@@ -17,8 +17,9 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 CLOUDINARY_FOLDER=facecheck/references
 
-# Comma-separated administrators permitted to import users.
-ADMIN_EMAILS=you@example.com
+# Passcode required before a signed-in visitor can use /adduser.
+# Use a long, unique value and keep it only in .dev.vars / runtime secrets.
+ADDUSER_PASSCODE=
 
 # Optional calibration values. Start at 95 and validate with consented data.
 FACE_MATCH_THRESHOLD=95

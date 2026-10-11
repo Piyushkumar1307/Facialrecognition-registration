@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 export type ImportUserRow = {
   externalId: string;
   fullName: string;
+  age: string | null;
+  profession: string | null;
   email: string | null;
   department: string | null;
   role: string | null;
@@ -55,6 +57,8 @@ const requiredFields: HeaderField[] = ["externalId", "fullName"];
 const fieldLabels: Record<HeaderField, string> = {
   externalId: "External ID",
   fullName: "Full name",
+  age: "Age",
+  profession: "Profession",
   email: "Email",
   department: "Department",
   role: "Role",
@@ -79,6 +83,8 @@ const headerAliases: Record<HeaderField, string[]> = {
     "id",
   ],
   fullName: ["fullName", "full name", "name", "employee name", "user name", "display name"],
+  age: ["age", "years old", "years"],
+  profession: ["profession", "occupation", "career"],
   email: ["email", "email address", "e-mail", "mail"],
   department: ["department", "dept", "team", "division", "organization", "organisation"],
   role: ["role", "job title", "title", "position", "designation"],
@@ -327,6 +333,8 @@ export function AddUserImporter({ className, onImportComplete }: AddUserImporter
         const parsedRows = result.data.map((rawRow, index): ParsedRow => {
           const externalId = cleanString(mapping.externalId ? rawRow[mapping.externalId] : "");
           const fullName = cleanString(mapping.fullName ? rawRow[mapping.fullName] : "");
+          const age = cleanString(mapping.age ? rawRow[mapping.age] : "");
+          const profession = cleanString(mapping.profession ? rawRow[mapping.profession] : "");
           const email = cleanString(mapping.email ? rawRow[mapping.email] : "");
           const department = cleanString(mapping.department ? rawRow[mapping.department] : "");
           const role = cleanString(mapping.role ? rawRow[mapping.role] : "");
@@ -338,6 +346,9 @@ export function AddUserImporter({ className, onImportComplete }: AddUserImporter
 
           if (!externalId) rowErrors.push("External ID is required");
           if (!fullName) rowErrors.push("Full name is required");
+          if (age && (!/^[1-9]\d{0,2}$/.test(age) || Number(age) > 130)) {
+            rowErrors.push("Age must be a whole number from 1 to 130");
+          }
           if (email && !isValidEmail(email)) rowErrors.push("Email is not valid");
           if (faceImageUrl && !isHttpUrl(faceImageUrl)) rowErrors.push("Face image URL must begin with http:// or https://");
           if (parsedMetadata.error) rowErrors.push(parsedMetadata.error);
@@ -348,6 +359,8 @@ export function AddUserImporter({ className, onImportComplete }: AddUserImporter
             row: {
               externalId,
               fullName,
+              age: age || null,
+              profession: profession || null,
               email: email || null,
               department: department || null,
               role: role || null,
@@ -416,8 +429,8 @@ export function AddUserImporter({ className, onImportComplete }: AddUserImporter
 
   const downloadTemplate = useCallback(() => {
     const csv = [
-      "externalId,fullName,email,department,role,faceImageUrl,metadata",
-      'EMP-001,Jane Doe,jane.doe@example.com,Operations,Manager,https://res.cloudinary.com/example/image/upload/jane-doe.jpg,"{""location"":""HQ""}"',
+      "externalId,fullName,age,profession,email,department,role,faceImageUrl,metadata",
+      'EMP-001,Jane Doe,31,Operations Manager,jane.doe@example.com,Operations,Manager,https://res.cloudinary.com/example/image/upload/jane-doe.jpg,"{""location"":""HQ""}"',
     ].join("\n");
     const href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const link = document.createElement("a");
@@ -641,12 +654,14 @@ export function AddUserImporter({ className, onImportComplete }: AddUserImporter
             </div>
 
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="min-w-[820px] w-full text-left text-sm">
+              <table className="min-w-[1040px] w-full text-left text-sm">
                 <thead className="bg-slate-50 text-xs uppercase tracking-[0.08em] text-slate-500">
                   <tr>
                     <th className="px-4 py-3 font-semibold">Row</th>
                     <th className="px-4 py-3 font-semibold">Person</th>
                     <th className="px-4 py-3 font-semibold">External ID</th>
+                    <th className="px-4 py-3 font-semibold">Age</th>
+                    <th className="px-4 py-3 font-semibold">Profession</th>
                     <th className="px-4 py-3 font-semibold">Face image</th>
                     <th className="px-4 py-3 font-semibold">Metadata</th>
                     <th className="px-4 py-3 font-semibold">Status</th>
@@ -660,6 +675,10 @@ export function AddUserImporter({ className, onImportComplete }: AddUserImporter
                         <td className="px-4 py-3 text-slate-500">{entry.rowNumber}</td>
                         <td className="px-4 py-3 font-medium text-slate-800">{entry.row.fullName || "—"}</td>
                         <td className="px-4 py-3 text-slate-700">{entry.row.externalId || "—"}</td>
+                        <td className="px-4 py-3 text-slate-700">{entry.row.age ?? "—"}</td>
+                        <td className="max-w-48 truncate px-4 py-3 text-slate-700" title={entry.row.profession ?? undefined}>
+                          {entry.row.profession ?? "—"}
+                        </td>
                         <td className="max-w-52 truncate px-4 py-3 text-slate-600" title={entry.row.faceImageUrl ?? undefined}>
                           {entry.row.faceImageUrl ? "Provided" : "Not provided"}
                         </td>

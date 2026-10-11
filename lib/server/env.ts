@@ -59,13 +59,3 @@ export function getMatchMargin(): number {
   return readIntegerEnvironment("FACE_MATCH_MARGIN", 3, 0, 25);
 }
 
-export function getAdminEmails(): Set<string> {
-  const raw = readEnvironment("ADMIN_EMAILS");
-  return new Set(
-    (raw ?? "")
-      .split(",")
-      .map((email) => email.trim().toLowerCase())
-      .filter(Boolean),
-  );
-}
-
