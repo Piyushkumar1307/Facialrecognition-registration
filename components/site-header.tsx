@@ -1,8 +1,8 @@
-import { Camera, ShieldCheck, Upload } from "lucide-react";
+import { Camera, ShieldCheck, Upload, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 
 type SiteHeaderProps = {
-  current: "scan" | "import";
+  current: "scan" | "import" | "register";
 };
 
 export function SiteHeader({ current }: SiteHeaderProps) {
@@ -33,6 +33,18 @@ export function SiteHeader({ current }: SiteHeaderProps) {
           >
             <Camera className="size-4" aria-hidden="true" />
             <span className="hidden sm:inline">Scan</span>
+          </Link>
+          <Link
+            href="/selfregister"
+            aria-current={current === "register" ? "page" : undefined}
+            className={`inline-flex min-h-9 items-center gap-2 rounded-lg px-3 transition-colors ${
+              current === "register"
+                ? "bg-[#ddf4ee] text-[#075c52]"
+                : "text-[#5d6f67] hover:bg-[#f1f5f2] hover:text-[#12211d]"
+            }`}
+          >
+            <UserRoundPlus className="size-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Self-register</span>
           </Link>
           <Link
             href="/adduser"

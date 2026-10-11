@@ -71,6 +71,10 @@ export async function POST(request: NextRequest) {
     try {
       results.push(await importOneUser(row));
     } catch (error) {
+      console.error("User import row failed", {
+        externalId: fallbackExternalId,
+        error: error instanceof Error ? error.stack ?? error.message : "UnknownError",
+      });
       const message = error instanceof Error ? error.message : "Could not import this row.";
       results.push({ externalId: fallbackExternalId, status: "failed", message });
     }

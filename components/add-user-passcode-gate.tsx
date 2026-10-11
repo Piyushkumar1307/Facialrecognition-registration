@@ -17,7 +17,15 @@ function responseError(value: unknown): string | null {
   return typeof error === "string" && error.trim() ? error : null;
 }
 
-export function AddUserPasscodeGate() {
+type AddUserPasscodeGateProps = {
+  description?: string;
+  buttonLabel?: string;
+};
+
+export function AddUserPasscodeGate({
+  description = "This additional check unlocks the CSV importer for this browser for eight hours.",
+  buttonLabel = "Unlock importer",
+}: AddUserPasscodeGateProps = {}) {
   const [passcode, setPasscode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +62,7 @@ export function AddUserPasscodeGate() {
       </span>
       <h2 className="mt-5 text-xl font-semibold tracking-tight text-slate-950">Enter admin passcode</h2>
       <p className="mt-2 text-sm leading-6 text-slate-600">
-        This additional check unlocks the CSV importer for this browser for eight hours.
+        {description}
       </p>
 
       <form className="mt-6 space-y-4" onSubmit={(event) => void submit(event)}>
@@ -85,7 +93,7 @@ export function AddUserPasscodeGate() {
           type="submit"
         >
           {isSubmitting ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <KeyRound className="size-4" aria-hidden="true" />}
-          {isSubmitting ? "Checking…" : "Unlock importer"}
+          {isSubmitting ? "Checking…" : buttonLabel}
         </button>
       </form>
     </section>

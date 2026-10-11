@@ -4,7 +4,7 @@ import {
   saveUser,
   userForExternalId,
 } from "@/lib/server/database";
-import { imageFromRemoteUrl } from "@/lib/server/images";
+import { imageFromRemoteUrl, type ValidatedImage } from "@/lib/server/images";
 import { deleteIndexedFace, indexFace } from "@/lib/server/rekognition";
 
 export type ImportUserInput = {
@@ -133,6 +133,15 @@ export async function importOneUser(input: ImportUserInput): Promise<ImportRowRe
   }
 
   const image = await imageFromRemoteUrl(record.faceImageUrl);
+  return enrollNormalizedUser(record, profile, existing, image);
+}
+
+async function enrollNormalizedUser(
+  record: NormalizedImportUser,
+  profile: EnrolledUser,
+  existing: EnrolledUser | null,
+  image: ValidatedImage,
+): Promise<ImportRowResult> {
   const asset = await uploadReferenceImage(image);
   let indexed: Awaited<ReturnType<typeof indexFace>> | null = null;
 
@@ -164,5 +173,14 @@ export async function importOneUser(input: ImportUserInput): Promise<ImportRowRe
     externalId: record.externalId,
     status: existing ? "updated" : "created",
   };
+}
+
+export async function enrollCapturedUser(
+  input: ImportUserInput,
+  image: ValidatedImage,
+): Promise<ImportRowResult> {
+  const record = normalize(input);
+  const existing = await userForExternalId(record.externalId);
+  return enrollNormalizedUser(record, withProfile(record, existing), existing, image);
 }
 

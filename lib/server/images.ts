@@ -110,11 +110,18 @@ export async function imageFromRemoteUrl(rawUrl: string): Promise<ValidatedImage
   try {
     const response = await fetch(url, {
       method: "GET",
-      redirect: "error",
+      // Cloudflare Workers supports "follow" and "manual", but not "error".
+      // Manual mode preserves the SSRF guarantee: every redirect is rejected
+      // by the !response.ok check instead of being followed to another host.
+      redirect: "manual",
       signal: abortController.signal,
       headers: { Accept: "image/jpeg,image/png" },
     });
     if (!response.ok) {
+      console.error("Reference image download returned an error", {
+        hostname: url.hostname,
+        status: response.status,
+      });
       throw new ImageInputError("The reference image could not be downloaded.");
     }
 
@@ -127,6 +134,10 @@ export async function imageFromRemoteUrl(rawUrl: string): Promise<ValidatedImage
     return validateImage(new Uint8Array(await response.arrayBuffer()), maximumBytes);
   } catch (error) {
     if (error instanceof ImageInputError) throw error;
+    console.error("Reference image download failed", {
+      hostname: url.hostname,
+      error: error instanceof Error ? `${error.name}: ${error.message}` : "UnknownError",
+    });
     throw new ImageInputError("The reference image could not be downloaded.");
   } finally {
     clearTimeout(timeout);
