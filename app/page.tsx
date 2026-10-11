@@ -18,7 +18,7 @@ export default async function Home() {
           </div>
           <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">Verify an enrolled face</h1>
           <p className="mt-3 max-w-xl text-pretty leading-7 text-[#5d6f67]">
-            Start your camera and center one face in frame. FaceCheck captures automatically and opens the result when a match is found.
+            Start your camera, center one face in frame, then capture a photo to check it against enrolled records.
           </p>
         </div>
 
