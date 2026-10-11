@@ -9,7 +9,6 @@ DATABASE_URL=
 AWS_REGION=ap-south-1
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
-AWS_SESSION_TOKEN=
 AWS_REKOGNITION_COLLECTION_ID=facecheck-collection
 
 # Cloudinary. Reference images are stored as authenticated assets.

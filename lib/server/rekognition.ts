@@ -8,7 +8,6 @@ import {
 import {
   getMatchMargin,
   getMatchThreshold,
-  readEnvironment,
   requireEnvironment,
 } from "@/lib/server/env";
 import type { ValidatedImage } from "@/lib/server/images";
@@ -21,7 +20,6 @@ type RekognitionConfiguration = {
 function rekognition(): RekognitionConfiguration {
   const accessKeyId = requireEnvironment("AWS_ACCESS_KEY_ID");
   const secretAccessKey = requireEnvironment("AWS_SECRET_ACCESS_KEY");
-  const sessionToken = readEnvironment("AWS_SESSION_TOKEN");
   return {
     collectionId: requireEnvironment("AWS_REKOGNITION_COLLECTION_ID"),
     client: new RekognitionClient({
@@ -29,7 +27,6 @@ function rekognition(): RekognitionConfiguration {
       credentials: {
         accessKeyId,
         secretAccessKey,
-        ...(sessionToken ? { sessionToken } : {}),
       },
     }),
   };

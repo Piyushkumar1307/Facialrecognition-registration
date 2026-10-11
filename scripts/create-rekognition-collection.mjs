@@ -16,7 +16,6 @@ const client = new RekognitionClient({
   credentials: {
     accessKeyId: required("AWS_ACCESS_KEY_ID"),
     secretAccessKey: required("AWS_SECRET_ACCESS_KEY"),
-    ...(process.env.AWS_SESSION_TOKEN ? { sessionToken: process.env.AWS_SESSION_TOKEN } : {}),
   },
 });
 

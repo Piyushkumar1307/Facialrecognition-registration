@@ -43,7 +43,6 @@ All secrets must be server-side deployment secrets—never `NEXT_PUBLIC_*` value
 | `DATABASE_URL` | Neon pooled Postgres connection string |
 | `AWS_REGION` | AWS region containing the collection |
 | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | Runtime IAM credentials |
-| `AWS_SESSION_TOKEN` | Optional temporary-credential token |
 | `AWS_REKOGNITION_COLLECTION_ID` | Existing collection ID |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Server-only Cloudinary upload credentials |
 | `CLOUDINARY_FOLDER` | Folder for authenticated reference assets |
