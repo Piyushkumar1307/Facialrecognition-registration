@@ -13,7 +13,6 @@ import {
   ScanFace,
   UserRound,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -99,7 +98,6 @@ async function readJson(response: Response): Promise<unknown> {
  * while the request is in progress and closes the camera after capture.
  */
 export function ScanPanel({ className, onMatch }: ScanPanelProps) {
-  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -292,7 +290,7 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
         setPhase("matched");
         onMatch?.(user);
         sessionStorage.setItem("facecheck:last-match", JSON.stringify(user));
-        router.push("/result");
+        window.location.assign("/result");
         return;
       }
 
@@ -316,7 +314,7 @@ export function ScanPanel({ className, onMatch }: ScanPanelProps) {
         abortRef.current = null;
       }
     }
-  }, [clearPreview, onMatch, router, stopCamera]);
+  }, [clearPreview, onMatch, stopCamera]);
 
   useEffect(() => {
     if (phase !== "camera") return;
